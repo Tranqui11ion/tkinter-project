@@ -19,8 +19,23 @@ def save_file():
 
     notebook.tab('current', text=filename)
 
-def create_file():
+def open_file():
+    file_path = filedialog.askopenfilename()
+
+    try:
+        filename = os.path.basename(file_path)
+
+        with open(file_path, "r") as file:
+            content = file.read()
+
+    except (AttributeError, FileNotFoundError):
+        print("Open operation cancelled")
+        return
+
+    create_file(content, filename)
+def create_file(content="", title="Untitled"):
     text_area = tk.Text(notebook)
+    text_area.insert("end", content)
     text_area.pack(fill="both", expand=True)
     notebook.add(text_area, text="Untitled")
     notebook.select(text_area)
@@ -43,6 +58,7 @@ root.config(menu=menubar, bg='blue')
 file_menu = tk.Menu(menubar, activebackground='purple')
 menubar.add_cascade(menu=file_menu, label='File')
 file_menu.add_command(label="New", command=create_file)
+file_menu.add_command(label="Open", command=open_file)
 file_menu.add_command(label='Save', command=save_file)
 file_menu.add_separator()
 file_menu.add_command(label="Quit", command=quit)
